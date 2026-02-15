@@ -21,6 +21,7 @@
       security_group: "{{ sg_id }}"
       image_id: "{{ ami_id }}"
       name: "{{ item }}-{{ env }}"
+      wait: false
       tags:
         Project: roboshop
         Component: "{{ item }}"
@@ -44,8 +45,9 @@
       type: A
       ttl: 1
       value: "{{ item.instances[0].private_ip_address }}"
-      wait: true
-    loop: "{{ ec2_output.results }}"
+      wait: false # wait until the changes have been replicated to all amazon route 53 dns servers. default(false) 
+      overwrite: true # If a record with the same name + type already exists, Ansible will replace it with the new value instead of failing.
+    loop: "{{ ec2_output.results }}" # list
     when: action == "create"
 
   - name: create route53 record for frontend
@@ -56,7 +58,8 @@
       type: A
       ttl: 1
       value: "{{ item.instances[0].public_ip_address }}"
-      wait: true
+      wait: false
+      overwrite: true
     loop: "{{ ec2_output.results }}"
     when: 
     - item.item == "frontend"
