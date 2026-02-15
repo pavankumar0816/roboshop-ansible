@@ -10,7 +10,7 @@
       name: nodejs
       state: present
   
-  - name: Creating system user roboshop
+  - name: Creating system user
     ansible.builtin.user:
       name: roboshop
       system: true
@@ -49,7 +49,7 @@
       path: /app
 
   - name: copy user service
-    ansible.builtin.copy:
+    ansible.builtin.template:
       src: user.service
       dest: /etc/systemd/system/user.service
 
